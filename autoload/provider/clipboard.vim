@@ -31,28 +31,42 @@ function! s:try_cmd(cmd, ...)
 endfunction
 
 let s:cache_enabled = 1
-if executable('pbcopy')
-  let s:copy['+'] = 'pbcopy'
-  let s:paste['+'] = 'pbpaste'
-  let s:copy['*'] = s:copy['+']
-  let s:paste['*'] = s:paste['+']
-  let s:cache_enabled = 0
-elseif executable('xclip')
-  let s:copy['+'] = 'xclip -quiet -i -selection clipboard'
-  let s:paste['+'] = 'xclip -o -selection clipboard'
-  let s:copy['*'] = 'xclip -quiet -i -selection primary'
-  let s:paste['*'] = 'xclip -o -selection primary'
-elseif executable('xsel')
-  let s:copy['+'] = 'xsel --nodetach -i -b'
-  let s:paste['+'] = 'xsel -o -b'
-  let s:copy['*'] = 'xsel --nodetach -i -p'
-  let s:paste['*'] = 'xsel -o -p'
+if $DISPLAY != ''
+    if executable('pbcopy')
+        let s:copy['+'] = 'pbcopy'
+        let s:paste['+'] = 'pbpaste'
+        let s:copy['*'] = s:copy['+']
+        let s:paste['*'] = s:paste['+']
+        let s:cache_enabled = 0
+    elseif executable('xclip')
+        let s:copy['+'] = 'xclip -quiet -i -selection clipboard'
+        let s:paste['+'] = 'xclip -o -selection clipboard'
+        let s:copy['*'] = 'xclip -quiet -i -selection primary'
+        let s:paste['*'] = 'xclip -o -selection primary'
+    elseif executable('xsel')
+        let s:copy['+'] = 'xsel --nodetach -i -b'
+        let s:paste['+'] = 'xsel -o -b'
+        let s:copy['*'] = 'xsel --nodetach -i -p'
+        let s:paste['*'] = 'xsel -o -p'
+    endif 
+elseif executable('tmux') && $TMUX != ''
+    let s:copy['+']= 'tmux set-buffer'
+    let s:paste['+']= 'tmux paste-buffer'
+    let s:copy['*']= s:copy['+']
+    let s:paste['*']= s:past['*']
 else
-  echom 'clipboard: No clipboard tool available. See :help nvim-clipboard'
-  finish
+    echom 'clipboard: No clipboard tool available. See :help nvim-clipboard'
+    finish
+endif
 
-  let s:copy['&']= 'tmux set-buffer'
-  let s:paste['&']= 'tmux paste-buffer'
+if executable('tmux') && $TMUX != ''
+   let s:copy['&']= 'tmux set-buffer'
+   let s:paste['&']= 'tmux paste-buffer'
+endif
+
+if executable('tmux') && $TMUX != ''
+   let s:copy['&']= 'tmux set-buffer'
+   let s:paste['&']= 'tmux paste-buffer'
 endif
 
 let s:clipboard = {}
