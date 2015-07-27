@@ -53,7 +53,7 @@ elseif executable('tmux') && $TMUX != ''
     let s:copy['+']= 'tmux set-buffer'
     let s:paste['+']= 'tmux paste-buffer'
     let s:copy['*']= s:copy['+']
-    let s:paste['*']= s:past['*']
+    let s:paste['*']= s:paste['+']
 else
     echom 'clipboard: No clipboard tool available. See :help nvim-clipboard'
     finish
