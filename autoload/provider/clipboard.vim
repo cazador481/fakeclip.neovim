@@ -72,6 +72,7 @@ endif
 let s:clipboard = {}
 
 function! s:clipboard.get(reg)
+    let reg - a:reg =='"' ? '+' : a:reg
   if s:selections[a:reg].owner > 0
     return s:selections[a:reg].data
   end
@@ -79,25 +80,32 @@ function! s:clipboard.get(reg)
 endfunction
 
 function! s:clipboard.set(lines, regtype, reg)
+  if a:reg =='"'
+    call s:clipboard.set(a:lines,a:regtype,'+')
+    if s:copy['*'] != s:copy['+']
+        call s:clipboard.set(a:lines,a:regtype,'*')
+    end
+    return 0;
+  end
   if s:cache_enabled == 0
-    call s:try_cmd(s:copy[a:reg], a:lines)
-    return 0
+      call s:try_cmd(s:copy[a:reg], a:lines)
+      return 0
   end
 
   let selection = s:selections[a:reg]
   if selection.owner > 0
-    " The previous provider instance should exit when the new one takes
-    " ownership, but kill it to be sure we don't fill up the job table.
-    call jobstop(selection.owner)
+      " The previous provider instance should exit when the new one takes
+      " ownership, but kill it to be sure we don't fill up the job table.
+      call jobstop(selection.owner)
   end
   let selection.data = [a:lines, a:regtype]
   let argv = split(s:copy[a:reg], " ")
   let jobid = jobstart(argv, selection)
   if jobid <= 0
-    echohl WarningMsg
-    echo "clipboard: error when invoking provider"
-    echohl None
-    return 0
+      echohl WarningMsg
+      echo "clipboard: error when invoking provider"
+      echohl None
+      return 0
   endif
   call jobsend(jobid, a:lines)
   call jobclose(jobid, 'stdin')
@@ -105,5 +113,5 @@ function! s:clipboard.set(lines, regtype, reg)
 endfunction
 
 function! provider#clipboard#Call(method, args)
-  return call(s:clipboard[a:method],a:args,s:clipboard)
+    return call(s:clipboard[a:method],a:args,s:clipboard)
 endfunction
