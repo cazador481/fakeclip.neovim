@@ -50,7 +50,7 @@ if $DISPLAY != ''
         let s:paste['*'] = 'xsel -o -p'
     endif 
 elseif executable('tmux') && $TMUX != ''
-    let s:copy['+']= 'tmux set-buffer'
+    let s:copy['+']= 'tmux load-buffer -'
     let s:paste['+']= 'tmux paste-buffer'
     let s:copy['*']= s:copy['+']
     let s:paste['*']= s:paste['+']
@@ -60,12 +60,12 @@ else
 endif
 
 if executable('tmux') && $TMUX != ''
-   let s:copy['&']= 'tmux set-buffer'
+   let s:copy['&']= 'tmux load-buffer -'
    let s:paste['&']= 'tmux paste-buffer'
 endif
 
 if executable('tmux') && $TMUX != ''
-   let s:copy['&']= 'tmux set-buffer'
+   let s:copy['&']= 'tmux load-buffer -'
    let s:paste['&']= 'tmux paste-buffer'
 endif
 
