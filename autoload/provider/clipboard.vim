@@ -51,7 +51,7 @@ if $DISPLAY != ''
     endif 
 elseif executable('tmux') && $TMUX != ''
     let s:copy['+']= 'tmux load-buffer -'
-    let s:paste['+']= 'tmux paste-buffer'
+    let s:paste['+']= 'tmux show-buffer'
     let s:copy['*']= s:copy['+']
     let s:paste['*']= s:paste['+']
 else
@@ -59,19 +59,21 @@ else
     finish
 endif
 
-if executable('tmux') && $TMUX != ''
-   let s:copy['&']= 'tmux load-buffer -'
-   let s:paste['&']= 'tmux paste-buffer'
+if executable('tmux') && $TMUX != '' && exists('g:vim_fakeclip_tmux_plus') && g:vim_fakeclip_tmux_plus == 1
+   let s:copy['+']= 'tmux load-buffer -'
+   let s:paste['+']= 'tmux show-buffer'
 endif
 
+" This does not work, nvim no longer supports arbitrary register overrides
 if executable('tmux') && $TMUX != ''
    let s:copy['&']= 'tmux load-buffer -'
-   let s:paste['&']= 'tmux paste-buffer'
+   let s:paste['&']= 'tmux show-buffer'
 endif
 
 let s:clipboard = {}
 
 function! s:clipboard.get(reg)
+    echom "register is ". a:reg
     let reg = a:reg =='"' ? '+' : a:reg
   if s:selections[a:reg].owner > 0
     return s:selections[a:reg].data

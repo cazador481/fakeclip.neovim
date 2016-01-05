@@ -6,5 +6,8 @@ The + and * register will map to the X clipboards
 
 If you are running w/o X and with tmux the + and * registers will map to the tmux clipboard 
 
+to enable tmux to be mapped to the + register enable 
+```
+set g:vim_fakeclip_tmux_plus=1 
+```
 
-If you are running tmux the & register will map to the tmux clipboard
