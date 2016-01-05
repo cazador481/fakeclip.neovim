@@ -72,7 +72,7 @@ endif
 let s:clipboard = {}
 
 function! s:clipboard.get(reg)
-    let reg - a:reg =='"' ? '+' : a:reg
+    let reg = a:reg =='"' ? '+' : a:reg
   if s:selections[a:reg].owner > 0
     return s:selections[a:reg].data
   end
