@@ -8,6 +8,6 @@ If you are running w/o X and with tmux the + and * registers will map to the tmu
 
 to enable tmux to be mapped to the + register enable 
 ```
-set g:vim_fakeclip_tmux_plus=1 
+let g:vim_fakeclip_tmux_plus=1 
 ```
 
